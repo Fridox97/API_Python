@@ -3,7 +3,7 @@ import requests
 import json
 from PIL import Image
 
-url = "http://localhost:8000/detect_person"
+url = "http://3.216.124.50/detect_person"
 path_perro = "C:\\Users\\Jeiso\\Desktop\\LO DEMAS\\perro.jpeg"
 path_gato = "C:\\Users\\Jeiso\\Desktop\\LO DEMAS\\gato.jpeg"
 pathperson = "People.jpg"
