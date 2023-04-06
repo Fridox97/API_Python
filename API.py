@@ -15,15 +15,30 @@ async def detect(image: UploadFile = File(...)):
     contents = await image.read()
     nparr = np.fromstring(contents, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    personas = 0
 
-    # initialize the HOG descriptor
-    hog = cv2.HOGDescriptor()
-    hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+    model = cv2.dnn.readNetFromCaffe('MobileNetSSD_deploy.prototxt.txt',
+                                     'MobileNetSSD_deploy.caffemodel')
 
-    # detect humans in input image
-    (humans, _) = hog.detectMultiScale(img, winStride=(10, 10), padding=(32, 32), scale=1.1)
+    # Resize image to a fixed width of 300 pixels (the input size of the model)
+    image_resized = cv2.resize(img, (300, 300))
 
-    # getting no. of human detected
-    return {"Humanos": len(humans)}
+    # Preprocess the image by subtracting the mean RGB values and scaling by a factor of 0.007843
+    blob = cv2.dnn.blobFromImage(image_resized, 0.007843, (300, 300), (127.5, 127.5, 127.5), False)
 
+    # Set the input to the model
+    model.setInput(blob)
 
+    # Run the forward pass through the model to detect objects in the image
+    detections = model.forward()
+
+    for i in range(detections.shape[2]):
+        confidence = detections[0, 0, i, 2]
+
+        # If the confidence score is above a certain threshold (e.g., 0.5), treat it as a detection
+        if confidence > 0.8:
+            class_id = int(detections[0, 0, i, 1])
+            if class_id == 15:
+                personas += 1
+
+    return {"humanos": personas}
