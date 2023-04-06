@@ -9,13 +9,15 @@ app = FastAPI()
 async def root():
     return {"message": "Hola mundo"}
 
-@app.post("/detect_person")
+@app.post("/detectar")
 async def detect(image: UploadFile = File(...)):
     # Reading the Image
     contents = await image.read()
     nparr = np.fromstring(contents, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     personas = 0
+    perro = 0
+    gato = 0
 
     model = cv2.dnn.readNetFromCaffe('MobileNetSSD_deploy.prototxt.txt',
                                      'MobileNetSSD_deploy.caffemodel')
@@ -40,5 +42,11 @@ async def detect(image: UploadFile = File(...)):
             class_id = int(detections[0, 0, i, 1])
             if class_id == 15:
                 personas += 1
+            if class_id == 8:
+                gato += 1
+            if class_id == 12:
+                perro += 1
 
-    return {"humanos": personas}
+    return {"humanos": personas,
+            "gatos": gato,
+            "perros": perro}
