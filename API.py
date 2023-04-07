@@ -41,10 +41,10 @@ async def detect(image: UploadFile = File(...)):
         if confidence > 0.8 and class_id == 15:
             personas += 1
 
-        if confidence > 0.75 and class_id == 12:
+        if confidence > 0.6 and class_id == 12:
             perro += 1
 
-        if confidence > 0.7 and class_id == 8:
+        if confidence > 0.5 and class_id == 8:
             gato += 1
 
     return {"humanos": personas,
