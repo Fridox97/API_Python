@@ -36,16 +36,16 @@ async def detect(image: UploadFile = File(...)):
 
     for i in range(detections.shape[2]):
         confidence = detections[0, 0, i, 2]
-        class_id = int(detections[0, 0, i, 1])
+
         # If the confidence score is above a certain threshold (e.g., 0.5), treat it as a detection
-        if confidence > 0.8 and class_id == 15:
-            personas += 1
-
-        if confidence > 0.6 and class_id == 12:
-            perro += 1
-
-        if confidence > 0.5 and class_id == 8:
-            gato += 1
+        if confidence > 0.8:
+            class_id = int(detections[0, 0, i, 1])
+            if class_id == 15:
+                personas += 1
+            if class_id == 8:
+                gato += 1
+            if class_id == 12:
+                perro += 1
 
     return {"humanos": personas,
             "gatos": gato,
