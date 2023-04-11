@@ -38,7 +38,7 @@ async def detect(image: UploadFile = File(...)):
         confidence = detections[0, 0, i, 2]
 
         # If the confidence score is above a certain threshold (e.g., 0.5), treat it as a detection
-        if confidence > 0.8:
+        if confidence > 0.7:
             class_id = int(detections[0, 0, i, 1])
             if class_id == 15:
                 personas += 1
